@@ -1,11 +1,12 @@
-from MapInfo import MapInfo
-from Robot import Robot
+from domain import MapInfo
+
 from collections import deque
 import copy
 
 class AddON():
     map_info: MapInfo = None
     spot_list: list = None
+    __path: list = None
 
     def __init__(self):
         pass
@@ -36,7 +37,7 @@ class AddON():
 
         # 2차원 배열 초기화
         map_info = [['.' for _ in range(col + 1)] for _ in range(row + 1)]
-        map_info[robot_row][robot_col] = 'R'
+        # map_info[robot_row][robot_col] = 'R'
 
         # 각 문자에 해당하는 좌표에 해당 문자 표시
         for pos in self.spot_list:
@@ -78,6 +79,8 @@ class AddON():
             # break 안 되었을 때 - 목적지에 도착할 수 없을 때
             else :
                 raise ValueError("The robot can't reach all the spots.")
+        
+        self.__path = total_path
 
         return total_path
 
@@ -89,13 +92,8 @@ class AddON():
         for pos in pos_list:
             self.map_info.set_pos_info(pos, 'C')
     
-    def mark_robot(self, cur_pos: tuple, next_pos: tuple):
-        cur_info = self.map_info.get_pos_info(cur_pos)
-        next_info = self.map_info.get_pos_info(next_pos)
-        self.map_set_pos_info(cur_pos, '.')
-        self.map_set_pos_info(next_pos, 'R')
-    
     def follow_path(self, robot_status: dict, next_pos: tuple):
+        next_pos = self.__path[0]
         r_pos = robot_status["pos"]
         r_direction = robot_status["direction"]
         if r_pos == next_pos:
@@ -113,8 +111,4 @@ class AddON():
     def compensating_imperfact_motion():
         pass
     def get_robot_position():
-        pass
-
-    def run(self, robot_pos: tuple):
-        # while 
         pass

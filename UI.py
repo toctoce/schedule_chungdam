@@ -9,8 +9,8 @@ class UI():
     def __init__(self, row, col) -> None:
         # TODO:셀 사이즈 맵 크기로 조정
         self.cell_size = 100
-        self.row = row
-        self.col = col
+        self.row = row + 1
+        self.col = col + 1
         pygame.init()
         pygame.display.set_caption("Image Display")
 
@@ -33,7 +33,7 @@ class UI():
         self.imgs['.'] = pygame.transform.scale(self.imgs['.'], (self.cell_size, self.cell_size))
 
     
-    def display(self, map_info:MapInfo):
+    def display(self, map_info: MapInfo):
         # 초기 맵 출력
         self.ui_print(map_info)
         # 이벤트 처리
@@ -53,10 +53,11 @@ class UI():
         # 격자 출력
         self.ui_reset(map_info)
         # map_info를 이용해 이미지를 해당 위치에 출력
-        for row_idx in range(map_info.get_row()):
-            for col_idx in range(map_info.get_col()):
+        for row_idx in range(self.row):
+            for col_idx in range(self.col):
                 # key : h, c, r, p, i
                 key = map_info.get_info()[row_idx][col_idx]
+                # H C R . c
                 if key in ['.','h','c']:
                     continue
                 self.screen.blit(self.imgs[key], (col_idx * self.cell_size, row_idx * self.cell_size))
@@ -66,15 +67,15 @@ class UI():
         # 흰색으로 전부 채움.
         self.screen.fill(WHITE)
         # 열 격자 출력
-        for row in range(map_info.get_row()):
+        for row in range(self.row):
             pygame.draw.line(self.screen, BLACK, \
                              (0 + self.cell_size / 2, row * self.cell_size + self.cell_size / 2), \
-                                (map_info.get_col() * self.cell_size - self.cell_size / 2, row * self.cell_size + self.cell_size / 2))
+                                (map_info.get_col() * self.cell_size + self.cell_size / 2, row * self.cell_size + self.cell_size / 2))
         # 행 격자 출력
-        for col in range(map_info.get_col()):
+        for col in range(self.col):
             pygame.draw.line(self.screen, BLACK, \
                              (col * self.cell_size + self.cell_size / 2, 0 + self.cell_size / 2), \
-                                (col * self.cell_size + self.cell_size / 2, map_info.get_row() * self.cell_size - self.cell_size / 2))
+                                (col * self.cell_size + self.cell_size / 2, map_info.get_row() * self.cell_size + self.cell_size / 2))
 
 # TODO:이벤트 들어오면 새롭게 동작해야함.
 # TODO:맨 아래 추가 버튼? 필요할 수도.
