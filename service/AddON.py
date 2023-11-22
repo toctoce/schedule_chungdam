@@ -54,7 +54,7 @@ class AddON():
         # 로봇 위치 반환
         return (robot_row, robot_col)
 
-    def plan_path(self, robot_pos: tuple, spot_list: list):
+    def plan_path(self, robot_pos: tuple):
         total_path = [robot_pos]
         for spot in self.spot_list:
             # robot pos, 경로
@@ -92,14 +92,16 @@ class AddON():
         for pos in pos_list:
             self.map_info.set_pos_info(pos, 'C')
     
-    def follow_path(self, robot_status: dict, next_pos: tuple):
+    def follow_path(self, robot_status: dict):
         next_pos = self.__path[0]
         r_pos = robot_status["pos"]
         r_direction = robot_status["direction"]
         if r_pos == next_pos:
+            self.__path.pop(0)
             return None
         gap = (next_pos[0] - r_pos[0], next_pos[1] - r_pos[1])
         if gap == [(-1, 0), (0, 1), (1, 0), (0, -1)][r_direction]:
+            self.__path.pop(0)
             return "forward"
         elif gap in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
             return "turn_right"
@@ -112,3 +114,5 @@ class AddON():
         pass
     def get_robot_position():
         pass
+    def get_path(self) -> list:
+        return self.__path

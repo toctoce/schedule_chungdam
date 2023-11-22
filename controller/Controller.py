@@ -1,5 +1,10 @@
-from service import AddON
-from service import Sim
+from .Facade import Facade
 
 class Controller():
-    pass
+    facade: Facade = None
+
+    def __init__(self):
+        self.facade = Facade()
+
+    def run(self):
+        self.facade.run()

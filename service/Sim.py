@@ -7,10 +7,17 @@ from domain import MapInfo
 class Sim():
     __robot: Robot = None
     
+    def __init__(self) -> None:
+        pass
+    
     def __init__(self, robot_pos: tuple) -> None:
         self.__robot = Robot(robot_pos)
 
-    def detect_hazard(self, map_info: MapInfo):
+    def create_robot(self, robot_pos: tuple) -> None:
+        if self.__robot is not None:
+            self.__robot = Robot(robot_pos)
+
+    def detect_hazard(self, map_info: MapInfo) -> list:
         pos_list = []
 
         find_pos = self.__robot.get_forward_pos()
@@ -21,7 +28,7 @@ class Sim():
         
         return pos_list
     
-    def detect_color_blob(self, map_info: MapInfo):
+    def detect_color_blob(self, map_info: MapInfo) -> list:
         pos_list = []
 
         find_pos_list = self.__robot.get_all_direction_pos()
@@ -34,7 +41,7 @@ class Sim():
         
         return pos_list
 
-    def move_robot(self, command: str):
+    def move_robot(self, command: str) -> dict:
         if command is None:
             return None
         if command == "forward":
@@ -45,5 +52,5 @@ class Sim():
             raise ValueError("Sim received invalid command")
         return self.get_robot_status()
         
-    def get_robot_status(self):
+    def get_robot_status(self) -> dict:
         return self.__robot.get_status()
