@@ -1,6 +1,3 @@
-import sys, os
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
 from domain import Robot
 from domain import MapInfo
 
@@ -30,7 +27,7 @@ class Sim():
     
     def detect_color_blob(self, map_info: MapInfo) -> list:
         pos_list = []
-
+        
         find_pos_list = self.__robot.get_all_direction_pos()
         for find_pos in find_pos_list:
             map_info.is_valid_pos(find_pos)

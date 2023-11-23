@@ -1,3 +1,5 @@
+import random
+
 class Robot():
     __pos: tuple = None
     __direction: int = 0
@@ -10,12 +12,34 @@ class Robot():
         self.__pos = pos
 
     def forword(self) -> dict:
-        r, c = self.get_forward_pos()
-        self.__pos = (r, c)
+        # 오작동
+        if random.random() <= 0.1:
+            # 아무 동작 안함.
+            if random.random() <= 0.5:
+                pass
+            # 두 번 움직임.
+            else :
+                self.__pos = self.get_forward_pos()
+                self.__pos = self.get_forward_pos()
+        # 제대로 작동
+        else :
+            self.__pos = self.get_forward_pos()
         return self.get_status()
+
     
     def turn_right(self) -> dict:
-        self.__direction = (self.__direction + 1) % 4
+        # 오작동
+        if random.random() <= 0.1:
+            # 아무 동작 안함.
+            if random.random() <= 0.5:
+                pass
+            # 두 번 움직임.
+            else :
+                self.__direction = (self.__direction + 1) % 4
+                self.__direction = (self.__direction + 1) % 4
+        # 제대로 작동
+        else :
+            self.__direction = (self.__direction + 1) % 4
         return self.get_status()
     
     def get_status(self) -> dict:

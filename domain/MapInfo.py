@@ -9,10 +9,6 @@ class MapInfo():
         # H : found hazard, C : found color blob
         # info는 처음에 h, c, R, P, .으로 세팅됨.
         self.__info = info
-        # self.set_pos_info((3,2),'H')
-        # self.set_pos_info((3,3),'C')
-        # print(self.__row, self.__col)
-        # print(self.__info)
     
     def __str__(self):
         ret = ""
@@ -23,10 +19,10 @@ class MapInfo():
         ret += f"row : {self.__row}, col : {self.__col}"
         return ret
     
-    def get_pos_info(self, pos: tuple):
+    def get_pos_info(self, pos: tuple) -> str:
         return self.__info[pos[0]][pos[1]]
     
-    def set_pos_info(self, pos: tuple, new_info: str):
+    def set_pos_info(self, pos: tuple, new_info: str) -> None:
         self.__info[pos[0]][pos[1]] = new_info
     
     def is_valid_pos(self, pos: tuple) -> bool:
@@ -34,9 +30,9 @@ class MapInfo():
             return True
         return False
 
-    def get_row(self):
+    def get_row(self) -> int:
         return self.__row
-    def get_col(self):
+    def get_col(self) -> int:
         return self.__col
-    def get_info(self):
+    def get_info(self) -> list:
         return self.__info

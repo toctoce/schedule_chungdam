@@ -82,8 +82,6 @@ class AddON():
         
         self.__path = total_path
 
-        return total_path
-
     def mark_hazard(self, pos_list: list):
         for pos in pos_list:
             self.map_info.set_pos_info(pos, 'H')
@@ -110,9 +108,57 @@ class AddON():
     
     def map_set_pos_info(self, pos: tuple, new_info: str):
         self.map_info.set_pos_info(pos, new_info)
-    def compensating_imperfact_motion():
-        pass
-    def get_robot_position():
-        pass
+
+    def check_mulfunction(self, command, prev_status, cur_status) -> bool:
+        prev_pos = prev_status["pos"]
+        prev_direction = prev_status["direction"]
+        cur_pos = cur_status["pos"]
+        cur_direction = cur_status["direction"]
+        if command is None:
+            if prev_direction == cur_direction and prev_pos == cur_pos:
+                return False
+            else :
+                return True
+        if command == "forward":
+            if prev_direction != cur_direction:
+                return True
+            if (prev_direction == 0) and \
+                (cur_pos[0] - prev_pos[0] != -1 or cur_pos[1] - prev_pos[1] != 0):
+                    return True
+            elif (prev_direction == 1) and \
+                (cur_pos[0] - prev_pos[0] != 0 or cur_pos[1] - prev_pos[1] != 1):
+                    return True
+            elif (prev_direction == 2) and \
+                (cur_pos[0] - prev_pos[0] != 1 or cur_pos[1] - prev_pos[1] != 0):
+                    return True
+            elif (prev_direction == 3) and \
+                (cur_pos[0] - prev_pos[0] != 0 or cur_pos[1] - prev_pos[1] != -1):
+                    return True
+        elif command == "turn_right":
+            if prev_pos != cur_pos:
+                return True
+            if (prev_direction + 1) % 4 != cur_direction:
+                return True
+        return False
+
+    def compensating_imperfact_motion(self, command: str, prev_status: dict, cur_status: dict) -> None:
+        if self.check_mulfunction(command, prev_status, cur_status):
+            cur_pos = cur_status["pos"]
+            if self.map_info.is_valid_pos(cur_pos) == False:
+                raise ValueError("Malfunction : Out of the map")
+            if self.map_info.get_pos_info(cur_pos) in ['H', 'h']:
+                raise ValueError("Malfunction : Reached the hazard")
+            self.plan_path(cur_status["pos"])
+
+    def check_reach_spot(self, robot_pos: tuple):
+        if self.map_info.is_valid_pos(robot_pos) == False:
+            return
+        if self.map_info.get_pos_info(robot_pos) == 'P':
+            try:
+                idx = self.spot_list.index(robot_pos)
+                self.spot_list.pop(idx)
+            except ValueError:
+                pass
+
     def get_path(self) -> list:
         return self.__path

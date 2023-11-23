@@ -48,6 +48,8 @@
 # # print(add_on.map_info.get_col())
 # # ui = UI(add_on.map_info.get_row(), add_on.map_info.get_col())
 # # ui.display(add_on.map_info)
+a = (3,2)
+b = (3,2)
 
 from controller import Controller
 controller = Controller()
