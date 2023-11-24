@@ -63,3 +63,10 @@ class Robot():
         for d_row, d_col in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
             ret.append((r + d_row, c + d_col))
         return ret
+
+    def get_status_dict(self) -> dict:
+        return {
+            "row": self.__pos[0],
+            "col": self.__pos[1],
+            "direction": self.__direction,
+        }

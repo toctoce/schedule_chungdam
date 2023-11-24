@@ -46,8 +46,10 @@ class Sim():
         elif command == "turn_right":
             self.__robot.turn_right()
         else :
-            raise ValueError("Sim received invalid command")
+            raise Exception("Sim received invalid command")
         return self.get_robot_status()
-        
+
     def get_robot_status(self) -> dict:
         return self.__robot.get_status()
+    def get_robot_status_dict(self) -> dict:
+        return self.__robot.get_status_dict()
