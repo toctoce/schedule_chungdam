@@ -154,7 +154,7 @@ class AddON():
     def get_path(self) -> list:
         return self.__path
     
-    def get_map_info(self) -> dict:
+    def get_map_info(self) -> MapInfo:
         return self.__map_info
 
     def get_map_info_dict(self) -> dict:
@@ -165,5 +165,5 @@ class AddON():
         }
 
     def set_map_one_pos(self, pos: tuple, new_info: str):
-        coord_sys_pos = (self.get_map_info["row"] - pos[0], pos[1])
+        coord_sys_pos = (self.get_map_info().get_row() - pos[0], pos[1])
         self.__map_info.set_pos_info(coord_sys_pos, new_info)
