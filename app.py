@@ -33,3 +33,6 @@ def voice_recognization():
     
 if __name__ == '__main__':
     app.run(debug=True)
+
+ctr = Controller()
+ret = ctr.operator_input(1,1,1,1,1)
