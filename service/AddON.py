@@ -99,9 +99,6 @@ class AddON():
             return "turn_right"
         else :
             raise Exception("Invalid Path")
-    
-    def map_set_pos_info(self, pos: tuple, new_info: str):
-        self.__map_info.set_pos_info(pos, new_info)
 
     def check_mulfunction(self, command, prev_status, cur_status) -> bool:
         prev_pos = prev_status["pos"]
@@ -139,9 +136,9 @@ class AddON():
         if self.check_mulfunction(command, prev_status, cur_status):
             cur_pos = cur_status["pos"]
             if self.__map_info.is_valid_pos(cur_pos) == False:
-                raise Exception("Malfunction : Out of the map")
+                raise Exception("Out of the map")
             if self.__map_info.get_pos_info(cur_pos) in ['H', 'h']:
-                raise Exception("Malfunction : Reached the hazard")
+                raise Exception("Reached the hazard")
             self.plan_path(cur_status["pos"])
 
     def check_reach_spot(self, robot_pos: tuple):
@@ -166,3 +163,7 @@ class AddON():
             "col": self.__map_info.get_col(),
             "info": self.__map_info.get_info()
         }
+
+    def set_map_one_pos(self, pos: tuple, new_info: str):
+        coord_sys_pos = (self.get_map_info["row"] - pos[0], pos[1])
+        self.__map_info.set_pos_info(coord_sys_pos, new_info)

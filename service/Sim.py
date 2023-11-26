@@ -4,11 +4,12 @@ from domain import MapInfo
 class Sim():
     __robot: Robot = None
     
-    def __init__(self) -> None:
-        pass
-    
     def __init__(self, robot_pos: tuple) -> None:
         self.__robot = Robot(robot_pos)
+    
+    def __init__(self) -> None:
+        self.__robot = Robot((0, 0))
+        pass
 
     def create_robot(self, robot_pos: tuple) -> None:
         if self.__robot is not None:
@@ -53,3 +54,5 @@ class Sim():
         return self.__robot.get_status()
     def get_robot_status_dict(self) -> dict:
         return self.__robot.get_status_dict()
+    def set_robot_status(self, pos, direction) -> None:
+        self.__robot.set_status(pos, direction)

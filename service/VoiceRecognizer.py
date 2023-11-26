@@ -22,10 +22,11 @@ class VoiceRecognizer():
         "해저드": 'h', "해저브": 'h', "해저그": 'h', "해더드": 'h', "해더브": 'h',
         "해더그": 'h', "해처드": 'h', "해처그": 'h', "해처브": 'h', "헤이그": 'h',
         "헤어": 'h', "해접": 'h', "허접": 'h', "하자드": 'h', "하저드": 'h',
-        "하자그": 'h', "하자브": 'h',
+        "하자그": 'h', "하자브": 'h'
         }
-    
-    def transcribe_audio(audio_file_path, id, api_key):
+    def __init__(self) -> None:
+        pass
+    def __voice_to_text(self, audio_file_path, id, api_key):
         url = "https://naveropenapi.apigw.ntruss.com/recog/v1/stt?=lang=Kor"
         
         headers = {
@@ -49,13 +50,13 @@ class VoiceRecognizer():
         if word in self.__dic.keys():
             return self.__dic[word]
         return None
-        
-    def convert_stt_to_data(self, stt: str):
-        words = stt.split()
+    
+    def __text_to_data(self, text: str):
+        words = text.split()
         data = list(map(self.__handle_word, words))
         return data
     
-    def handle_data(self, data: list):
+    def __data_to_info(self, data: list):
         processed_data = []
         for i in range(len(data)-1, -1, -1):
             if isinstance(data[i], int):
@@ -68,21 +69,31 @@ class VoiceRecognizer():
                 break
         if len(processed_data) != 3:
             raise Exception("Voice recognization : Invalid Word")
-        processed_data.reverse()
-        return processed_data
+        # processed_data.reverse()
+        info = {
+            "type": processed_data[2],
+            "pos": (processed_data[1], processed_data[0])
+        }
+        return info
+    
+    def voice_to_info(self, audio_file_path, id, api_key):
+        text = self.__voice_to_text(audio_file_path, id, api_key)
+        data = self.__text_to_data(text["text"])
+        info = self.__data_to_info(data)
+        return info
         
 # .env 파일 로드
-load_dotenv()
-id = os.getenv("ID")
-api_key = os.getenv("API_KEY")
-# res = VoiceRecognizer.transcribe_audio("./example3.mp3", id, api_key)
-res = "컬러 블록 3 3"
-a = 1
-print(type(a))
-vr = VoiceRecognizer()
-a = vr.convert_stt_to_data(res)
-b = vr.handle_data(a)
-print(b)
+# load_dotenv()
+# id = os.getenv("ID")
+# api_key = os.getenv("API_KEY")
+# # res = VoiceRecognizer.transcribe_audio("./example3.mp3", id, api_key)
+# res = "컬러 블록 3 3"
+# a = 1
+# print(type(a))
+# vr = VoiceRecognizer()
+# a = vr.convert_stt_to_data(res)
+# b = vr.handle_data(a)
+# print(b)
 # print(VoiceRecognizer.handle_word('컬러'))
 
 # res = """{"text":"안녕하세요 경주입니다"}"""

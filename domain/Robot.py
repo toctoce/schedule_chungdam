@@ -70,3 +70,7 @@ class Robot():
             "col": self.__pos[1],
             "direction": self.__direction,
         }
+    
+    def set_status(self, pos, direction) -> None:
+        self.__pos = pos
+        self.__direction = direction
