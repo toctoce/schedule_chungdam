@@ -36,3 +36,11 @@ class MapInfo():
         return self.__col
     def get_info(self) -> list:
         return self.__info
+    def get_info_str(self) -> str:
+        ret = ""
+        for line in self.__info:
+            for element in line:
+                ret += element
+            ret += "\n"
+
+        return ret

@@ -168,3 +168,6 @@ class AddON():
     def set_map_one_pos(self, pos: tuple, new_info: str):
         coord_sys_pos = (self.get_map_info().get_row() - pos[0], pos[1])
         self.__map_info.set_pos_info(coord_sys_pos, new_info)
+    
+    def get_map_info_str(self) -> str:
+        return self.__map_info.get_info_str()
