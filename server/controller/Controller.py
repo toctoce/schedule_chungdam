@@ -30,8 +30,9 @@ class Controller():
         self.add_on.plan_path(robot_status["pos"])
 
         process.append({
-            "map_info": self.add_on.get_map_info_dict(),
-            "robot": self.sim.get_robot_status_dict()
+            "map_info": self.add_on.get_map_info_str(),
+            "robot": self.sim.get_robot_status_dict(),
+            "status": 0
         })
 
         while self.add_on.get_path():
@@ -51,7 +52,8 @@ class Controller():
                 self.add_on.compensating_imperfact_motion(command, prev_r_status, cur_r_status)
             except Exception as e:
                 process.append({
-                    "err": str(e)
+                    "err": str(e),
+                    "status": 1
                 })
                 break
             color_blob_list = self.sim.detect_color_blob(self.add_on.get_map_info())
@@ -63,8 +65,9 @@ class Controller():
                 self.add_on.plan_path(self.sim.get_robot_status()["pos"])
             
             process.append({
-                "map_info": self.add_on.get_map_info_dict(),
-                "robot": self.sim.get_robot_status_dict()
+                "map_info": self.add_on.get_map_info_str(),
+                "robot": self.sim.get_robot_status_dict(),
+                "status": 0
             })
 
         print("마지막 상태")

@@ -1,5 +1,5 @@
 import pygame
-from MapInfo import MapInfo
+from domain import MapInfo
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
