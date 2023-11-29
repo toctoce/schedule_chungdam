@@ -13,11 +13,11 @@ class AddON():
 
     # 로봇 위치 반환
     def handle_map(self, map_input, start_input, spot_input, color_input, hazard_input) -> tuple:
-        map_input = "(4 5)"
-        start_input = "(1 2)"
-        spot_input = "((4 2)(0 5)(1 3))"
-        color_input = "((2 2)(4 4))"
-        hazard_input = "((1 0)(3 2)(0 2)(0 4))"
+        # map_input = "(4 5)"
+        # start_input = "(1 2)"
+        # spot_input = "((4 2)(0 5)(1 3))"
+        # color_input = "((2 2)(4 4))"
+        # hazard_input = "((1 0)(3 2)(0 2)(0 4))"
 
         # map 크기
         row, col = map(int, map_input.strip('()').split())
@@ -31,7 +31,6 @@ class AddON():
 
         # 2차원 배열 초기화
         map_info = [['.' for _ in range(col + 1)] for _ in range(row + 1)]
-        # map_info[robot_row][robot_col] = 'R'
 
         # 각 문자에 해당하는 좌표에 해당 문자 표시
         for pos in spot_list:

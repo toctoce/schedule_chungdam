@@ -16,10 +16,19 @@ class Controller():
         process = self.__run()
         return process
     
-    def voice_recognization(self, id, api_key):
+    def voice_recognization(self, id, api_key, file_stream, robot_status):
         vr = VoiceRecognizer()
-        voice_info = vr.voice_to_info("./example3.mp3", id, api_key)
+        # voice_info = vr.voice_to_info(id, api_key, file_stream)
+        voice_info = {
+            "type": 'c',
+            "pos": (1,2)
+        }
         self.add_on.set_map_one_pos(voice_info["pos"], voice_info['type'])
+
+        r_pos = (robot_status["row"], robot_status["col"])
+        r_direction = robot_status["direction"]
+        self.sim.set_robot_status(r_pos, r_direction)
+
         process = self.__run()
         return process
     
@@ -53,7 +62,7 @@ class Controller():
             except Exception as e:
                 process.append({
                     "err": str(e),
-                    "status": 1
+                    "status": -1
                 })
                 break
             color_blob_list = self.sim.detect_color_blob(self.add_on.get_map_info())

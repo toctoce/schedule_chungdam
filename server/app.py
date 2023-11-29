@@ -1,16 +1,25 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, json
 from controller import Controller
 from dotenv import load_dotenv
+from flask_cors import CORS
+
 import os
 
 app = Flask(__name__)
+
+cors_headers = {
+    "origins": "http://localhost:3000",
+}
+CORS(app, resources={r"/operator-input": cors_headers})
+CORS(app, resources={r"/voice-recognization": cors_headers})
+
 ctr = Controller()
 # .env 파일 로드
 load_dotenv()
 id = os.getenv("ID")
 api_key = os.getenv("API_KEY")
 
-@app.route('/operator_input', methods=['POST'])
+@app.route('/operator-input', methods=['POST'])
 def operator_input():
     data = request.get_json()
     
@@ -23,16 +32,16 @@ def operator_input():
     ret = ctr.operator_input(map_input, start_input, spot_input, color_input, hazard_input)
     return jsonify(ret)
 
-@app.route('/voice_recognization', methods=['POST'])
+@app.route('/voice-recognization', methods=['POST'])
 def voice_recognization():
-    print(ctr.add_on.get_map_info())
-    data = request.get_json()
+    data = request.files
+    robot_status = json.loads(request.form['robot'])
+    file_stream = data.get('file').stream
 
-    ret = ctr.voice_recognization(id, api_key)
-    return ret
-    
+    ret = ctr.voice_recognization(id, api_key, file_stream, robot_status)
+
+    return jsonify(ret), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-ctr = Controller()
-ret = ctr.operator_input(1,1,1,1,1)

@@ -24,7 +24,7 @@ class VoiceRecognizer():
         }
     def __init__(self) -> None:
         pass
-    def __voice_to_text(self, audio_file_path, id, api_key):
+    def __voice_to_text(self, id, api_key, file_stream):
         url = "https://naveropenapi.apigw.ntruss.com/recog/v1/stt?=lang=Kor"
         
         headers = {
@@ -33,10 +33,8 @@ class VoiceRecognizer():
             "X-NCP-APIGW-API-KEY": api_key,
         }
 
-        with open(audio_file_path, "rb") as audio_file:
-            audio_data = audio_file.read()
+        audio_data = file_stream.read()
         response = requests.post(url, headers=headers, data=audio_data)
-        
         if response.status_code == 200:
             return json.loads(response.text)
         else:
@@ -67,33 +65,14 @@ class VoiceRecognizer():
                 break
         if len(processed_data) != 3:
             raise Exception("Voice recognization : Invalid Word")
-        # processed_data.reverse()
         info = {
             "type": processed_data[2],
             "pos": (processed_data[1], processed_data[0])
         }
         return info
     
-    def voice_to_info(self, audio_file_path, id, api_key):
-        text = self.__voice_to_text(audio_file_path, id, api_key)
+    def voice_to_info(self, id, api_key, file_stream):
+        text = self.__voice_to_text(id, api_key, file_stream)
         data = self.__text_to_data(text["text"])
         info = self.__data_to_info(data)
         return info
-        
-# .env 파일 로드
-# load_dotenv()
-# id = os.getenv("ID")
-# api_key = os.getenv("API_KEY")
-# # res = VoiceRecognizer.transcribe_audio("./example3.mp3", id, api_key)
-# res = "컬러 블록 3 3"
-# a = 1
-# print(type(a))
-# vr = VoiceRecognizer()
-# a = vr.convert_stt_to_data(res)
-# b = vr.handle_data(a)
-# print(b)
-# print(VoiceRecognizer.handle_word('컬러'))
-
-# res = """{"text":"안녕하세요 경주입니다"}"""
-
-# json_data = json.loads(res)["text"]
