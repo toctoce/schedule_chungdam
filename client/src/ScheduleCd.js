@@ -1,17 +1,10 @@
+// ScheduleCd.js
+
 import React, { useState, useEffect } from "react";
 import "./ScheduleCd.css";
 
-const numRows = 7;
-const numCols = 10;
-const stringArray = [
-  ".HHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCC",
-  ".HHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHRRRRR",
-  "HHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHPPPPP",
-  "HHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHCCCCCHHHHHHHHHH",
-  // ... (원하는 문자열을 추가해주세요)
-];
-
-const generateEmptyBoard = () => {
+const generateEmptyBoard = (numRows, numCols) => {
+  console.log(numCols, numRows);
   const board = [];
   for (let i = 0; i < numRows; i++) {
     board.push(Array(numCols).fill(undefined));
@@ -19,68 +12,157 @@ const generateEmptyBoard = () => {
   return board;
 };
 
-const ScheduleCd = ({ isPaused }) => {
-  const [board, setBoard] = useState(generateEmptyBoard());
-  const [errorMessage, setErrorMessage] = useState("");
-  const [stringIndex, setStringIndex] = useState(0);
+const ScheduleCd = ({ isPaused, numRows, numCols }) => {
+  const [board, setBoard] = useState(generateEmptyBoard(numRows, numCols));
+  const [dummyData, setDummyData] = useState(null);
 
-  const getImagePath = (value) => {
-    switch (value) {
-      case "H":
+  const getRowColFromIndex = (index) => {
+    const row = Math.floor(index / numCols);
+    const col = index % numCols;
+
+    return [row, col];
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("./dummy.json");
+
+        const data = await response.json();
+        setDummyData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (!dummyData || isPaused) return;
+
+    let stringIndex = 0;
+    const intervalId = setInterval(() => {
+      if (stringIndex < dummyData.dummy.length) {
+        const nextData = dummyData.dummy[stringIndex];
+        const newBoard = mapInfoToBoard(nextData.map_info, nextData.robot);
+        setBoard(newBoard);
+        stringIndex++;
+      } else {
+        clearInterval(intervalId);
+        console.log("Recording stopped at index:", stringIndex - 1);
+        console.log(
+          "Corresponding map_info:",
+          dummyData.dummy[stringIndex - 1].map_info
+        );
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dummyData, isPaused]);
+
+  const mapInfoToBoard = (mapInfo, robot) => {
+    const lines = mapInfo.split("\n");
+    const newBoard = generateEmptyBoard(numRows, numCols);
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      for (let j = 0; j < line.length; j++) {
+        const inputValue = line[j];
+        const [row, col] = getRowColFromIndex(i * numCols + j);
+        let cellType = "";
+
+        switch (inputValue) {
+          case "H":
+            cellType = "hazard";
+            break;
+          case "C":
+            cellType = "colorblob";
+            break;
+          case "P":
+            cellType = "point";
+            break;
+          case "c":
+          case "h":
+            cellType = "empty";
+            break;
+          default:
+            cellType = "empty";
+            break;
+        }
+        if (row === robot.row && col === robot.col) {
+          console.log(robot.direction);
+          switch (robot.direction) {
+            case 0:
+              cellType = "robotN";
+              break;
+            case 1:
+              cellType = "robotE";
+              break;
+            case 2:
+              cellType = "robotS";
+              break;
+            case 3:
+              cellType = "robotW";
+              break;
+            default:
+              cellType = "empty";
+              break;
+          }
+        }
+
+        if (!newBoard[row]) {
+          newBoard[row] = [];
+        }
+        newBoard[row][col] = { type: cellType };
+      }
+    }
+
+    return newBoard;
+  };
+
+  const getImagePath = (cell) => {
+    const { type } = cell;
+
+    switch (type) {
+      case "empty":
+        return "";
+      case "hazard":
+        //console.log(1);
         return process.env.PUBLIC_URL + "/hazard.png";
-      case "C":
+      case "colorblob":
         return process.env.PUBLIC_URL + "/colorblob.png";
-      case "R":
-        return process.env.PUBLIC_URL + "/robot.png";
-      case "P":
+
+      case "point":
         return process.env.PUBLIC_URL + "/point.png";
-      case "c":
-      case "h":
-        return undefined;
       default:
         return "";
     }
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (!isPaused && stringIndex < stringArray.length) {
-        // 배열에서 다음 문자열을 가져와서 보드를 업데이트합니다.
-        const nextString = stringArray[stringIndex];
-        const newBoard = generateEmptyBoard();
-        for (let i = 0; i < nextString.length; i++) {
-          const inputValue = nextString[i];
-          const [row, col] = getRowColFromIndex(i);
-          newBoard[row][col] = inputValue;
-        }
-        setBoard(newBoard);
+  const getRobotPath = (cell) => {
+    const { type } = cell;
 
-        // 다음 문자열로 넘어갑니다.
-        setStringIndex((prevIndex) => prevIndex + 1);
-      } else {
-        // 모든 문자열을 돌았을 때, interval을 정리하고 종료 메시지를 표시합니다.
-        clearInterval(intervalId);
-        //setErrorMessage("정상적으로 종료되었음. 영규 보쌈 언제 먹을래?");
-        console.log("Recording stopped at index:", stringIndex - 1);
-        console.log("Corresponding stringArray:", stringArray[stringIndex - 1]);
-      }
-    }, 1000);
-
-    return () => {
-      // 컴포넌트가 언마운트되면 interval을 정리합니다.
-      clearInterval(intervalId);
-    };
-  }, [stringIndex, isPaused]);
-
-  const getRowColFromIndex = (index) => {
-    const row = Math.floor(index / numCols);
-    const col = index % numCols;
-    return [row, col];
+    switch (type) {
+      case "robotE":
+        return process.env.PUBLIC_URL + "/robotE.png";
+      case "robotS":
+        return process.env.PUBLIC_URL + "/robotS.png";
+      case "robotW":
+        return process.env.PUBLIC_URL + "/robotW.png";
+      case "robotN":
+        return process.env.PUBLIC_URL + "/robotN.png";
+      default:
+        return "";
+    }
   };
 
   return (
     <div>
-      <h1>ScheduleCd</h1>
+      <h1>Mapboard⬇️</h1>
       <table className="mapBoard">
         <tbody>
           {board.map((row, rowIndex) => (
@@ -89,18 +171,33 @@ const ScheduleCd = ({ isPaused }) => {
                 <td key={colIndex}>
                   {colIndex < numCols && <div className="vertical-line" />}
                   {rowIndex < numRows && <div className="horizontal-line" />}
-                  <td style={{ position: "relative" }}>
-                    {cell && (
-                      <React.Fragment>
-                        {getImagePath(cell) && (
-                          <img
-                            src={getImagePath(cell)}
-                            alt={`Cell at (${rowIndex}, ${colIndex})`}
-                            className={`cell-image cell-image-${cell}`}
-                          />
-                        )}
-                      </React.Fragment>
-                    )}
+                  <td>
+                    <div
+                      style={{
+                        position: "relative",
+                        width: "50px",
+                        height: "50px",
+                      }}
+                    >
+                      {cell && (
+                        <React.Fragment>
+                          {getImagePath(cell) && (
+                            <img
+                              src={getImagePath(cell)}
+                              alt={`Cell at (${rowIndex}, ${colIndex})`}
+                              className={`cell-image cell-image-${cell.type}`}
+                            />
+                          )}
+                          {getRobotPath(cell) && (
+                            <img
+                              src={getRobotPath(cell)}
+                              alt={`Cell at (${rowIndex}, ${colIndex})`}
+                              className={`robot-image robot-image-${cell.type}`}
+                            />
+                          )}
+                        </React.Fragment>
+                      )}
+                    </div>
                   </td>
                 </td>
               ))}
@@ -108,8 +205,6 @@ const ScheduleCd = ({ isPaused }) => {
           ))}
         </tbody>
       </table>
-
-      {errorMessage && <div className="error">{errorMessage}</div>}
     </div>
   );
 };
