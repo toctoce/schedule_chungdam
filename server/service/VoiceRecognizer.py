@@ -65,9 +65,10 @@ class VoiceRecognizer():
                 break
         if len(processed_data) != 3:
             raise Exception("Voice recognization : Invalid Word")
+        # processed_data 예시 - [2, 1, 'c']
         info = {
             "type": processed_data[2],
-            "pos": (processed_data[1], processed_data[0])
+            "pos": (processed_data[0], processed_data[1])
         }
         return info
     

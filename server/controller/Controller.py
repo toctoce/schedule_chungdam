@@ -35,6 +35,12 @@ class Controller():
     def __run(self):
         process = []
         
+        color_blob_list = self.sim.detect_color_blob(self.add_on.get_map_info())
+        self.add_on.mark_color_blob(color_blob_list)
+
+        hazard_list = self.sim.detect_hazard(self.add_on.get_map_info())
+        self.add_on.mark_hazard(hazard_list)
+
         robot_status = self.sim.get_robot_status()
         self.add_on.plan_path(robot_status["pos"])
 
@@ -58,7 +64,7 @@ class Controller():
             cur_r_status = self.sim.get_robot_status()
             self.add_on.check_reach_spot(cur_r_status["pos"])
             try :
-                self.add_on.compensating_imperfact_motion(command, prev_r_status, cur_r_status)
+                is_mulfunction = self.add_on.compensating_imperfact_motion(command, prev_r_status, cur_r_status)
             except Exception as e:
                 process.append({
                     "err": str(e),
@@ -76,7 +82,7 @@ class Controller():
             process.append({
                 "map_info": self.add_on.get_map_info_str(),
                 "robot": self.sim.get_robot_status_dict(),
-                "status": 0
+                "status": 0 if not is_mulfunction else 1
             })
 
         print("마지막 상태")
