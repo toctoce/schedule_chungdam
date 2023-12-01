@@ -36,15 +36,18 @@ def operator_input():
         hazard_input = data["hazard_input"]
 
         ret = ctr.operator_input(map_input, start_input, spot_input, color_input, hazard_input)
+        for a in ret:
+            print(a)
+
         return jsonify(ret)
 
 @app.route('/voice-recognization', methods=['POST'])
 def voice_recognization():
-    data = request.files
-    robot_status = json.loads(request.form['robot'])
-    file_stream = data.get('file').stream
+    file_data = request.files
+    file_stream = file_data.get('file').stream
+    status_data = json.loads(request.form['newroad'])
 
-    ret = ctr.voice_recognization(id, api_key, file_stream, robot_status)
+    ret = ctr.voice_recognization(id, api_key, file_stream, status_data)
 
     return jsonify(ret), 200
 

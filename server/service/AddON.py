@@ -49,7 +49,10 @@ class AddON():
         return (row - robot_row, robot_col)
 
     def plan_path(self, robot_pos: tuple):
+        print("=====================")
         print(self.__map_info)
+        print(self.__spot_list)
+        print("=====================")
         total_path = [robot_pos]
         for spot in self.__spot_list:
             # robot pos, 경로
@@ -171,5 +174,14 @@ class AddON():
         coord_sys_pos = (self.get_map_info().get_row() - pos[0], pos[1])
         self.__map_info.set_pos_info(coord_sys_pos, new_info)
     
+    def set_map_info(self, map_info: list) -> None:
+        self.__map_info.set_info(map_info)
+
     def get_map_info_str(self) -> str:
         return self.__map_info.get_info_str()
+    
+    def get_copy_spot_list(self) -> list:
+        return copy.deepcopy(self.__spot_list)
+    
+    def set_spot_list(self, spot_list) -> None:
+        self.__spot_list = spot_list

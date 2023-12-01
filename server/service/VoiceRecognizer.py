@@ -20,7 +20,7 @@ class VoiceRecognizer():
         "해저드": 'h', "해저브": 'h', "해저그": 'h', "해더드": 'h', "해더브": 'h',
         "해더그": 'h', "해처드": 'h', "해처그": 'h', "해처브": 'h', "헤이그": 'h',
         "헤어": 'h', "해접": 'h', "허접": 'h', "하자드": 'h', "하저드": 'h',
-        "하자그": 'h', "하자브": 'h'
+        "하자그": 'h', "하자브": 'h', "해자드": 'h', "해저": 'h', "해젓": 'h'
         }
     def __init__(self) -> None:
         pass
@@ -35,6 +35,7 @@ class VoiceRecognizer():
 
         audio_data = file_stream.read()
         response = requests.post(url, headers=headers, data=audio_data)
+        print(response.text)
         if response.status_code == 200:
             return json.loads(response.text)
         else:

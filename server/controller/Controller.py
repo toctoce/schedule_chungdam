@@ -16,18 +16,30 @@ class Controller():
         process = self.__run()
         return process
     
-    def voice_recognization(self, id, api_key, file_stream, robot_status):
-        vr = VoiceRecognizer()
-        # voice_info = vr.voice_to_info(id, api_key, file_stream)
-        voice_info = {
-            "type": 'c',
-            "pos": (1,2)
-        }
-        self.add_on.set_map_one_pos(voice_info["pos"], voice_info['type'])
+    def voice_recognization(self, id, api_key, file_stream, status_data):
+        map_info_data = status_data["map_info"]
+        map_info = list(map(list,(map_info_data.split())))
+        self.add_on.set_map_info(map_info)
 
+        spot_list = status_data["spot_list"]
+        spot_list = list(map(tuple, spot_list))
+        self.add_on.set_spot_list(spot_list)
+        print("spotspot", self.add_on.get_copy_spot_list())
+
+        robot_status = status_data["robot"]
         r_pos = (robot_status["row"], robot_status["col"])
         r_direction = robot_status["direction"]
         self.sim.set_robot_status(r_pos, r_direction)
+        print("rr", self.sim.get_robot_status_dict())
+
+        vr = VoiceRecognizer()
+        voice_info = vr.voice_to_info(id, api_key, file_stream)
+        # voice_info = {
+        #     "type": 'h',
+        #     "pos": (1,1)
+        # }
+        self.add_on.set_map_one_pos(voice_info["pos"], voice_info['type'])
+
 
         process = self.__run()
         return process
@@ -47,6 +59,7 @@ class Controller():
         process.append({
             "map_info": self.add_on.get_map_info_str(),
             "robot": self.sim.get_robot_status_dict(),
+            "spot_list": self.add_on.get_copy_spot_list(),
             "status": 0
         })
 
@@ -82,6 +95,7 @@ class Controller():
             process.append({
                 "map_info": self.add_on.get_map_info_str(),
                 "robot": self.sim.get_robot_status_dict(),
+                "spot_list": self.add_on.get_copy_spot_list(),
                 "status": 0 if not is_mulfunction else 1
             })
 

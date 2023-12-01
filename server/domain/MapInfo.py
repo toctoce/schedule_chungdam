@@ -22,14 +22,15 @@ class MapInfo():
     def get_pos_info(self, pos: tuple) -> str:
         return self.__info[pos[0]][pos[1]]
     
-    def set_pos_info(self, pos: tuple, new_info: str) -> None:
-        self.__info[pos[0]][pos[1]] = new_info
-    
     def is_valid_pos(self, pos: tuple) -> bool:
         if 0 <= pos[0] <= self.__row and 0 <= pos[1] <= self.__col:
             return True
         return False
 
+    def set_pos_info(self, pos: tuple, new_info: str) -> None:
+        self.__info[pos[0]][pos[1]] = new_info
+    def set_info(self, info: list) -> None:
+        self.__info = info
     def get_row(self) -> int:
         return self.__row
     def get_col(self) -> int:
@@ -44,3 +45,4 @@ class MapInfo():
             ret += "\n"
 
         return ret
+    
