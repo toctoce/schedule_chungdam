@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 
-const AudioRecord = ({ setPause }) => {
+const AudioRecord = ({ setPause, setReceivedData, newData }) => {
   const [stream, setStream] = useState();
   const [media, setMedia] = useState();
   const [onRec, setOnRec] = useState(true);
@@ -77,13 +77,33 @@ const AudioRecord = ({ setPause }) => {
   const onSubmitAudioFile = useCallback(() => {
     if (audioUrl) {
       console.log(URL.createObjectURL(audioUrl)); // 출력된 링크에서 녹음된 오디오 확인 가능
+      console.log(audioUrl); // 출력된 링크에서 녹음된 오디오 확인 가능
     }
-    // File 생성자를 사용해 파일로 변환
-    const sound = new File([audioUrl], "soundBlob", {
-      lastModified: new Date().getTime(),
-      type: "audio",
-    });
-    console.log(sound); // File 정보 출력
+
+    const formData = new FormData();
+    // robot에 현재 로봇 위치, 방향 정보 넣어서 리턴해주어야 함.
+
+    const newroad = newData;
+    formData.append("file", audioUrl);
+    formData.append("newroad", JSON.stringify(newroad));
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+
+    fetch("http://127.0.0.1:5000/voice-recognization", {
+      method: "POST",
+      body: formData,
+      // headers: {
+      //   // 추가된 부분
+      //   "Content-Type": "multipart/form-data",
+      // },
+      // mode: 'cors',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error("Error:", error));
   }, [audioUrl]);
 
   return (

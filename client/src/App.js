@@ -15,28 +15,13 @@ function App() {
   const [hazardInput, setHazardInput] = useState("");
   const [colorInput, setColorInput] = useState("");
   const [error, setError] = useState(null); // 추가
+  const [receivedData, setReceivedData] = useState(null);
+  const [newData, setNewData] = useState(null);
 
   console.log(numRows, numCols);
   const mapdata = `(${numRows} ${numCols})`;
   console.log(mapdata);
   const handleResume = () => {
-    setPaused(false);
-  };
-
-  const handleExecute = () => {
-    const isValidFormat = (input) => /^\((\(\d+\s+\d+\))+\)$/.test(input);
-    const isValidFormatMap = (input) => /^\(\d+\s+\d+\)$/.test(input);
-    if (
-      !isValidFormatMap(startInput) ||
-      !isValidFormat(spotInput) ||
-      !isValidFormat(hazardInput) ||
-      !isValidFormat(colorInput)
-    ) {
-      setError("Invalid data format. Please use the format (x y)");
-      return;
-    }
-
-    setError(null);
     setPaused(false);
   };
 
@@ -71,11 +56,36 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         console.log("Data sent successfully:", data);
+        setReceivedData({ data });
+        console.log({ receivedData });
         // 이거 받고 동작하게끔 하는거 이제 추가하면 됨.
       })
+
       .catch((error) => {
         console.error("Error sending data:", error);
       });
+  };
+
+  const handleExecute = () => {
+    const isValidFormat = (input) => /^\((\(\d+\s+\d+\))+\)$/.test(input);
+    const isValidFormatMap = (input) => /^\(\d+\s+\d+\)$/.test(input);
+    if (
+      !isValidFormatMap(startInput) ||
+      !isValidFormat(spotInput) ||
+      !isValidFormat(hazardInput) ||
+      !isValidFormat(colorInput)
+    ) {
+      setError("Invalid data format. Please use the format (x y)");
+      return;
+    }
+    console.log("start");
+    setError(null);
+    setPaused(false);
+
+    const handleNextDataReceived = (nextData) => {
+      // nextData를 필요한 변수에 저장하는 작업 수행
+      console.log("다음 데이터:", nextData);
+    };
   };
 
   return (
@@ -151,8 +161,14 @@ function App() {
         isPaused={isPaused}
         numRows={numRows + 1}
         numCols={numCols + 1}
+        receivedData={receivedData} // 함수를 전달
+        setNewData={setNewData}
       />
-      <AudioRecord setPause={setPaused} />
+      <AudioRecord
+        setPause={setPaused}
+        setReceivedData={setReceivedData}
+        newData={newData}
+      />
       <button onClick={handleResume}>재개</button>
     </div>
   );

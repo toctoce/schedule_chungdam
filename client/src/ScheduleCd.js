@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import "./ScheduleCd.css";
 
 const generateEmptyBoard = (numRows, numCols) => {
-  console.log(numCols, numRows);
   const board = [];
   for (let i = 0; i < numRows; i++) {
     board.push(Array(numCols).fill(undefined));
@@ -12,10 +11,16 @@ const generateEmptyBoard = (numRows, numCols) => {
   return board;
 };
 
-const ScheduleCd = ({ isPaused, numRows, numCols }) => {
+const ScheduleCd = ({
+  isPaused,
+  numRows,
+  numCols,
+  receivedData,
+  setNewData,
+}) => {
   const [board, setBoard] = useState(generateEmptyBoard(numRows, numCols));
   const [dummyData, setDummyData] = useState(null);
-
+  const [statusError, setStatusError] = useState(null);
   const getRowColFromIndex = (index) => {
     const row = Math.floor(index / numCols);
     const col = index % numCols;
@@ -26,34 +31,45 @@ const ScheduleCd = ({ isPaused, numRows, numCols }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("./dummy.json");
+        // const response = await fetch("./dummy.json");
+        // const response = receivedData;
+        // const data = await response.json();
 
-        const data = await response.json();
-        setDummyData(data);
+        setDummyData(receivedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [isPaused]);
 
   useEffect(() => {
     if (!dummyData || isPaused) return;
 
     let stringIndex = 0;
     const intervalId = setInterval(() => {
-      if (stringIndex < dummyData.dummy.length) {
-        const nextData = dummyData.dummy[stringIndex];
+      if (stringIndex < dummyData.data.length) {
+        const nextData = dummyData.data[stringIndex];
+        setNewData(nextData);
+        console.log({ nextData });
         const newBoard = mapInfoToBoard(nextData.map_info, nextData.robot);
         setBoard(newBoard);
         stringIndex++;
+        console.log(nextData.status);
+        if (nextData.status === 1) {
+          setStatusError("오작동이 발생했습니다");
+        } else if (nextData.status === -1) {
+          setStatusError("에러 발생. 종료");
+        } else {
+          setStatusError(null);
+        }
       } else {
         clearInterval(intervalId);
         console.log("Recording stopped at index:", stringIndex - 1);
         console.log(
           "Corresponding map_info:",
-          dummyData.dummy[stringIndex - 1].map_info
+          dummyData.data[stringIndex - 1].map_info
         );
       }
     }, 1000);
@@ -64,7 +80,8 @@ const ScheduleCd = ({ isPaused, numRows, numCols }) => {
   }, [dummyData, isPaused]);
 
   const mapInfoToBoard = (mapInfo, robot) => {
-    const lines = mapInfo.split("\n");
+    const lines = (mapInfo || "").split("\n");
+
     const newBoard = generateEmptyBoard(numRows, numCols);
 
     for (let i = 0; i < lines.length; i++) {
@@ -86,8 +103,10 @@ const ScheduleCd = ({ isPaused, numRows, numCols }) => {
             cellType = "point";
             break;
           case "c":
+            cellType = "colorblobB";
+            break;
           case "h":
-            cellType = "empty";
+            cellType = "hazardB";
             break;
           default:
             cellType = "empty";
@@ -138,6 +157,13 @@ const ScheduleCd = ({ isPaused, numRows, numCols }) => {
 
       case "point":
         return process.env.PUBLIC_URL + "/point.png";
+
+      case "hazardB":
+        return process.env.PUBLIC_URL + "/hazardB.png";
+
+      case "colorblobB":
+        return process.env.PUBLIC_URL + "/colorblobB.png";
+
       default:
         return "";
     }
