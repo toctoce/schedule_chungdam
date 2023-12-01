@@ -17,10 +17,11 @@ const ScheduleCd = ({
   numCols,
   receivedData,
   setNewData,
+  setError,
 }) => {
   const [board, setBoard] = useState(generateEmptyBoard(numRows, numCols));
   const [dummyData, setDummyData] = useState(null);
-  const [statusError, setStatusError] = useState(null);
+
   const getRowColFromIndex = (index) => {
     const row = Math.floor(index / numCols);
     const col = index % numCols;
@@ -58,11 +59,11 @@ const ScheduleCd = ({
         stringIndex++;
         console.log(nextData.status);
         if (nextData.status === 1) {
-          setStatusError("오작동이 발생했습니다");
+          setError("오작동이 발생했습니다");
         } else if (nextData.status === -1) {
-          setStatusError("에러 발생. 종료");
+          setError(nextData.err);
         } else {
-          setStatusError(null);
+          setError(null);
         }
       } else {
         clearInterval(intervalId);

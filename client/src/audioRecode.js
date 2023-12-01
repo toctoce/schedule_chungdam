@@ -102,6 +102,7 @@ const AudioRecord = ({ setPause, setReceivedData, newData }) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        setReceivedData({ data });
       })
       .catch((error) => console.error("Error:", error));
   }, [audioUrl]);

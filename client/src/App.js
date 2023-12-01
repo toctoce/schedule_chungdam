@@ -159,10 +159,11 @@ function App() {
       <button onClick={handlePostData}>Post Data</button>
       <ScheduleCd
         isPaused={isPaused}
-        numRows={numRows + 1}
-        numCols={numCols + 1}
+        numRows={numCols + 1}
+        numCols={numRows + 1}
         receivedData={receivedData} // 함수를 전달
         setNewData={setNewData}
+        setError={setError}
       />
       <AudioRecord
         setPause={setPaused}
