@@ -47,9 +47,9 @@ def voice_recognization():
     file_stream = file_data.get('file').stream
     status_data = json.loads(request.form['newroad'])
 
-    ret = ctr.voice_recognization(id, api_key, file_stream, status_data)
+    ret, status = ctr.voice_recognization(id, api_key, file_stream, status_data)
 
-    return jsonify(ret), 200
+    return jsonify({"ret": ret, "status": status}), 200
 
 
 if __name__ == '__main__':

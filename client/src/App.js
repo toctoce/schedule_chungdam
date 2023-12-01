@@ -152,11 +152,17 @@ function App() {
           />
         </label>
       </div>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
       <button onClick={handleExecute}>Execute</button>
       <button onClick={handlePostData}>Post Data</button>
+      <div style={{ height: "20px" }}>
+        {error !== null ? (
+          <p style={{ color: "red" }}>{error}</p>
+        ) : (
+          <div
+            style={{ height: "20px" /* 높이는 원하는대로 조절하세요 */ }}
+          ></div>
+        )}
+      </div>
       <ScheduleCd
         isPaused={isPaused}
         numRows={numCols + 1}
@@ -169,6 +175,7 @@ function App() {
         setPause={setPaused}
         setReceivedData={setReceivedData}
         newData={newData}
+        setError={setError}
       />
       <button onClick={handleResume}>재개</button>
     </div>

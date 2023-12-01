@@ -33,16 +33,20 @@ class Controller():
         print("rr", self.sim.get_robot_status_dict())
 
         vr = VoiceRecognizer()
-        voice_info = vr.voice_to_info(id, api_key, file_stream)
+        status = 0
+        try:
+            voice_info = vr.voice_to_info(id, api_key, file_stream)
+            self.add_on.set_map_one_pos(voice_info["pos"], voice_info['type'])
+        except Exception:
+            status = -1
         # voice_info = {
         #     "type": 'h',
         #     "pos": (1,1)
         # }
-        self.add_on.set_map_one_pos(voice_info["pos"], voice_info['type'])
 
 
         process = self.__run()
-        return process
+        return process, status
     
     def __run(self):
         process = []

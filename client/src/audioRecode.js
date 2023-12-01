@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 
-const AudioRecord = ({ setPause, setReceivedData, newData }) => {
+const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
   const [stream, setStream] = useState();
   const [media, setMedia] = useState();
   const [onRec, setOnRec] = useState(true);
@@ -99,11 +99,14 @@ const AudioRecord = ({ setPause, setReceivedData, newData }) => {
       // },
       // mode: 'cors',
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setReceivedData({ data });
-      })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      setReceivedData({ "data": data.ret });
+      if (data.status === -1){
+        setError("음성인식 에러");
+      }
+    })
       .catch((error) => console.error("Error:", error));
   }, [audioUrl]);
 
