@@ -39,21 +39,19 @@ class VoiceRecognizer():
         if response.status_code == 200:
             return json.loads(response.text)
         else:
-            raise Exception("Voice recognization : Failed")
+            raise Exception("Voice recognization failed")
     
-    def __handle_word(self, word: str) -> str:
+    def __handle_word(self, word: str):
         if word.isdigit():
             return int(word)
         if word in self.__dic.keys():
             return self.__dic[word]
         return None
     
-    def __text_to_data(self, text: str):
+    def __text_to_info(self, text: str):
         words = text.split()
         data = list(map(self.__handle_word, words))
-        return data
-    
-    def __data_to_info(self, data: list):
+
         processed_data = []
         for i in range(len(data)-1, -1, -1):
             if isinstance(data[i], int):
@@ -65,7 +63,7 @@ class VoiceRecognizer():
                 processed_data.append(data[i])
                 break
         if len(processed_data) != 3:
-            raise Exception("Voice recognization : Invalid Word")
+            raise Exception(f"Invalid Word : {text}")
         # processed_data 예시 - [2, 1, 'c']
         info = {
             "type": processed_data[2],
@@ -75,6 +73,5 @@ class VoiceRecognizer():
     
     def voice_to_info(self, id, api_key, file_stream):
         text = self.__voice_to_text(id, api_key, file_stream)
-        data = self.__text_to_data(text["text"])
-        info = self.__data_to_info(data)
+        info = self.__text_to_info(text["text"])
         return info

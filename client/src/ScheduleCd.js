@@ -63,7 +63,7 @@ const ScheduleCd = ({
         } else if (nextData.status === -1) {
           setError(nextData.err);
         } else {
-          setError(null);
+          setError(" ");
         }
       } else {
         clearInterval(intervalId);

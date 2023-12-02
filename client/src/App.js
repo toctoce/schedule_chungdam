@@ -28,7 +28,7 @@ function App() {
   const parseDimensions = (input) => {
     const matches = input.match(/\((\d+)\s+(\d+)\)/);
     if (matches && matches.length === 3) {
-      setError(null);
+      setError(" ");
       return { rows: parseInt(matches[1]), cols: parseInt(matches[2]) };
     } else {
       setError("Invalid input format. Please use the format (rows cols).");
@@ -79,7 +79,7 @@ function App() {
       return;
     }
     console.log("start");
-    setError(null);
+    setError(" ");
     setPaused(false);
 
     const handleNextDataReceived = (nextData) => {

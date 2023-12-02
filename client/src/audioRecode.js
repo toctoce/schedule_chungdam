@@ -93,18 +93,14 @@ const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
     fetch("http://127.0.0.1:5000/voice-recognization", {
       method: "POST",
       body: formData,
-      // headers: {
-      //   // 추가된 부분
-      //   "Content-Type": "multipart/form-data",
-      // },
-      // mode: 'cors',
     })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
       setReceivedData({ "data": data.ret });
+      setError(" ");
       if (data.status === -1){
-        setError("음성인식 에러");
+        setError(data.err);
       }
     })
       .catch((error) => console.error("Error:", error));
