@@ -1,9 +1,8 @@
-// App.js
-
+/* eslint-disable */
 import "./App.css";
 import React, { useState } from "react";
 import ScheduleCd from "./ScheduleCd";
-import AudioRecord from "./audioRecode";
+import AudioRecord from "./AudioRecord";
 
 function App() {
   const [isPaused, setPaused] = useState(true);
@@ -18,9 +17,8 @@ function App() {
   const [receivedData, setReceivedData] = useState(null);
   const [newData, setNewData] = useState(null);
 
-  console.log(numRows, numCols);
   const mapdata = `(${numRows} ${numCols})`;
-  console.log(mapdata);
+
   const handleResume = () => {
     setPaused(false);
   };
@@ -55,9 +53,8 @@ function App() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Data sent successfully:", data);
         setReceivedData({ data });
-        console.log({ receivedData });
+
         // 이거 받고 동작하게끔 하는거 이제 추가하면 됨.
       })
 
@@ -78,14 +75,9 @@ function App() {
       setError("Invalid data format. Please use the format (x y)");
       return;
     }
-    console.log("start");
+
     setError(" ");
     setPaused(false);
-
-    const handleNextDataReceived = (nextData) => {
-      // nextData를 필요한 변수에 저장하는 작업 수행
-      console.log("다음 데이터:", nextData);
-    };
   };
 
   return (

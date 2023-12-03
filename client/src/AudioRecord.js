@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useCallback } from "react";
 
 const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
@@ -75,34 +76,25 @@ const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
   };
 
   const onSubmitAudioFile = useCallback(() => {
-    if (audioUrl) {
-      console.log(URL.createObjectURL(audioUrl)); // 출력된 링크에서 녹음된 오디오 확인 가능
-      console.log(audioUrl); // 출력된 링크에서 녹음된 오디오 확인 가능
-    }
-
     const formData = new FormData();
     // robot에 현재 로봇 위치, 방향 정보 넣어서 리턴해주어야 함.
 
     const newroad = newData;
     formData.append("file", audioUrl);
     formData.append("newroad", JSON.stringify(newroad));
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
 
     fetch("http://127.0.0.1:5000/voice-recognization", {
       method: "POST",
       body: formData,
     })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      setReceivedData({ "data": data.ret });
-      setError(" ");
-      if (data.status === -1){
-        setError(data.err);
-      }
-    })
+      .then((response) => response.json())
+      .then((data) => {
+        setReceivedData({ data: data.ret });
+        setError(" ");
+        if (data.status === -1) {
+          setError(data.err);
+        }
+      })
       .catch((error) => console.error("Error:", error));
   }, [audioUrl]);
 
