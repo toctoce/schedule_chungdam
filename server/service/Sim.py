@@ -47,7 +47,7 @@ class Sim():
         elif command == "turn_right":
             self.__robot.turn_right()
         else :
-            raise Exception("Sim received invalid command")
+            raise Exception("잘못된 명령어가 입력되었습니다.")
         return self.get_robot_status()
 
     def get_robot_status(self) -> dict:

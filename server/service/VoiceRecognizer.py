@@ -39,7 +39,7 @@ class VoiceRecognizer():
         if response.status_code == 200:
             return json.loads(response.text)
         else:
-            raise Exception("Voice recognization failed")
+            raise Exception("음성인식 api 호출에 실패하였습니다.")
     
     def __handle_word(self, word: str):
         if word.isdigit():
@@ -63,7 +63,7 @@ class VoiceRecognizer():
                 processed_data.append(data[i])
                 break
         if len(processed_data) != 3:
-            raise Exception(f"Invalid Word : {text}")
+            raise Exception(f"형식에 맞지 않는 음성이 입력되었습니다. : {text}")
         # processed_data 예시 - [2, 1, 'c']
         info = {
             "type": processed_data[2],

@@ -76,7 +76,7 @@ class AddON():
                             q.append((next_pos, path + [cur_pos]))
             # break 안 되었을 때 - 목적지에 도착할 수 없을 때
             else :
-                raise Exception("The robot can't reach all the spots.")
+                raise Exception("로봇이 모든 spot에 도달할 수 없습니다.")
         
         self.__path = total_path
 
@@ -102,7 +102,7 @@ class AddON():
         elif gap in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
             return "turn_right"
         else :
-            raise Exception("Invalid Path")
+            raise Exception("이동할 수 없는 경로입니다.")
 
     def check_mulfunction(self, command, prev_status, cur_status) -> bool:
         prev_pos = prev_status["pos"]
@@ -141,9 +141,9 @@ class AddON():
         if is_mulfunction:
             cur_pos = cur_status["pos"]
             if self.__map_info.is_valid_pos(cur_pos) == False:
-                raise Exception("Out of the map")
+                raise Exception("오작동으로 인해 맵 밖에 도달하였습니다.")
             if self.__map_info.get_pos_info(cur_pos) in ['H', 'h']:
-                raise Exception("Reached the hazard")
+                raise Exception("오작동으로 인해 해저드에 도달하였습니다.")
             self.plan_path(cur_status["pos"])
         return is_mulfunction
 
