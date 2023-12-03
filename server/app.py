@@ -19,25 +19,25 @@ load_dotenv()
 id = os.getenv("ID")
 api_key = os.getenv("API_KEY")
 
-@app.route('/operator-input', methods=['POST','OPTIONS'])
+@app.route('/operator-input', methods=['POST'])
 def operator_input():
-    if request.method == 'OPTIONS':
-        # OPTIONS 메서드 처리
-        return "", 200
+    # if request.method == 'OPTIONS':
+    #     # OPTIONS 메서드 처리
+    #     return "", 200
 
-    elif request.method == 'POST':
+    # elif request.method == 'POST':
         # POST 메서드 처리
-        data = request.get_json()
-        
-        map_input = data["map_input"]
-        start_input = data["start_input"]
-        spot_input = data["spot_input"]
-        color_input = data["color_input"]
-        hazard_input = data["hazard_input"]
+    data = request.get_json()
+    
+    map_input = data["map_input"]
+    start_input = data["start_input"]
+    spot_input = data["spot_input"]
+    color_input = data["color_input"]
+    hazard_input = data["hazard_input"]
 
-        ret = ctr.operator_input(map_input, start_input, spot_input, color_input, hazard_input)
+    ret = ctr.operator_input(map_input, start_input, spot_input, color_input, hazard_input)
 
-        return jsonify(ret)
+    return jsonify(ret)
 
 @app.route('/voice-recognization', methods=['POST'])
 def voice_recognization():
