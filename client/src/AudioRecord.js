@@ -10,7 +10,7 @@ const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
   const [audioUrl, setAudioUrl] = useState();
 
   const onRecAudio = () => {
-    //setPause(true);
+    setError("음성 녹음 중 . . .");
     // 음원정보를 담은 노드를 생성하거나 음원을 실행또는 디코딩 시키는 일을 한다
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     // 자바스크립트를 통해 음원의 진행상태에 직접접근에 사용된다.
@@ -57,6 +57,7 @@ const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
 
   // 사용자가 음성 녹음을 중지했을 때
   const offRecAudio = () => {
+    setError("음성 녹음 완료");
     // dataavailable 이벤트로 Blob 데이터에 대한 응답을 받을 수 있음
     media.ondataavailable = function (e) {
       setAudioUrl(e.data);
@@ -77,12 +78,10 @@ const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
 
   const onSubmitAudioFile = useCallback(() => {
     const formData = new FormData();
-    // robot에 현재 로봇 위치, 방향 정보 넣어서 리턴해주어야 함.
-
     const newroad = newData;
     formData.append("file", audioUrl);
     formData.append("newroad", JSON.stringify(newroad));
-
+    setError("음성 인식 중 . . .")
     fetch("http://127.0.0.1:5000/voice-recognization", {
       method: "POST",
       body: formData,
@@ -90,7 +89,9 @@ const AudioRecord = ({ setPause, setReceivedData, newData, setError }) => {
       .then((response) => response.json())
       .then((data) => {
         setReceivedData({ data: data.ret });
-        setError(" ");
+        if (data.status == 0) {
+          setError("음성 인식 완료");
+        }
         if (data.status === -1) {
           setError(data.err);
         }

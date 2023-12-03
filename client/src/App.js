@@ -6,14 +6,13 @@ import AudioRecord from "./AudioRecord";
 
 function App() {
   const [isPaused, setPaused] = useState(true);
-  // const [initialBoardSize, setInitialBoardSize] = useState(null);
   const [numRows, setNumRows] = useState();
   const [numCols, setNumCols] = useState();
   const [startInput, setStartInput] = useState("");
   const [spotInput, setSpotInput] = useState("");
   const [hazardInput, setHazardInput] = useState("");
   const [colorInput, setColorInput] = useState("");
-  const [error, setError] = useState(null); // 추가
+  const [error, setError] = useState(null);
   const [receivedData, setReceivedData] = useState(null);
   const [newData, setNewData] = useState(null);
 
@@ -35,6 +34,7 @@ function App() {
   };
 
   const handlePostData = () => {
+    setPaused(true);
     const dataToSend = {
       map_input: mapdata,
       start_input: startInput,
@@ -43,7 +43,6 @@ function App() {
       color_input: colorInput,
     };
 
-    // 서버로 데이터 전송 예시
     fetch("http://127.0.0.1:5000/operator-input", {
       method: "POST",
       headers: {
@@ -54,8 +53,6 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setReceivedData({ data });
-
-        // 이거 받고 동작하게끔 하는거 이제 추가하면 됨.
       })
 
       .catch((error) => {
@@ -82,7 +79,8 @@ function App() {
 
   return (
     <div>
-      <h1>Robot Schedule App</h1>
+      <h1>Schedule Chungdam's App</h1>
+      <h2>AI기반 Mobile Robot Controller</h2>
 
       <div>
         <label>
@@ -151,7 +149,7 @@ function App() {
           <p style={{ color: "red" }}>{error}</p>
         ) : (
           <div
-            style={{ height: "20px" /* 높이는 원하는대로 조절하세요 */ }}
+            style={{ height: "20px" }}
           ></div>
         )}
       </div>
@@ -159,7 +157,7 @@ function App() {
         isPaused={isPaused}
         numRows={numCols + 1}
         numCols={numRows + 1}
-        receivedData={receivedData} // 함수를 전달
+        receivedData={receivedData}
         setNewData={setNewData}
         setError={setError}
       />

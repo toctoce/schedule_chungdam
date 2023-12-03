@@ -32,10 +32,6 @@ const ScheduleCd = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const response = await fetch("./dummy.json");
-        // const response = receivedData;
-        // const data = await response.json();
-
         setDummyData(receivedData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -191,7 +187,6 @@ const ScheduleCd = ({
                 <td key={colIndex}>
                   {colIndex < numCols && <div className="vertical-line" />}
                   {rowIndex < numRows && <div className="horizontal-line" />}
-
                   <div
                     style={{
                       position: "relative",
