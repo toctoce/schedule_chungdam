@@ -5,9 +5,9 @@ class MapInfo():
     def __init__(self, row:int, col:int, info:list):
         self.__row = row
         self.__col = col
-        # h : hidden hazard, c : hidden color blob, R : robot, P : predefined spot, . : nothing
+        # h : hidden hazard, c : hidden color blob, P : predefined spot, . : nothing
         # H : found hazard, C : found color blob
-        # info는 처음에 h, c, R, P, .으로 세팅됨.
+        # info는 처음에 h, c, P, .으로 세팅됨.
         self.__info = info
     
     def __str__(self):

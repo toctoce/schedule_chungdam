@@ -21,12 +21,6 @@ api_key = os.getenv("API_KEY")
 
 @app.route('/operator-input', methods=['POST'])
 def operator_input():
-    # if request.method == 'OPTIONS':
-    #     # OPTIONS 메서드 처리
-    #     return "", 200
-
-    # elif request.method == 'POST':
-        # POST 메서드 처리
     data = request.get_json()
     
     map_input = data["map_input"]
