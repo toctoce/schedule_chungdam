@@ -49,6 +49,24 @@ class Controller():
         return process, err
     
     def __run(self):
+        def return_dict(err=None):
+            if err is None:
+                ret = {
+                    "map_info": self.add_on.get_map_info_str(),
+                    "robot": self.sim.get_robot_status_dict(),
+                    "spot_list": self.add_on.get_copy_spot_list(),
+                    "status": 0
+                }
+            else :
+                ret = {
+                    "map_info": self.add_on.get_map_info_str(),
+                    "robot": self.sim.get_robot_status_dict(),
+                    "spot_list": self.add_on.get_copy_spot_list(),
+                    "err": err,
+                    "status": -1
+                }
+
+            return ret
         process = []
         
         color_blob_list = self.sim.detect_color_blob(self.add_on.get_map_info())
@@ -58,14 +76,13 @@ class Controller():
         self.add_on.mark_hazard(hazard_list)
 
         robot_status = self.sim.get_robot_status()
-        self.add_on.plan_path(robot_status["pos"])
+        try :
+            self.add_on.plan_path(robot_status["pos"])
+        except Exception as e:
+            process.append(return_dict(str(e)))
+            return process
 
-        process.append({
-            "map_info": self.add_on.get_map_info_str(),
-            "robot": self.sim.get_robot_status_dict(),
-            "spot_list": self.add_on.get_copy_spot_list(),
-            "status": 0
-        })
+        process.append(return_dict())
 
         while self.add_on.get_path():
             prev_r_status = self.sim.get_robot_status()
@@ -83,10 +100,7 @@ class Controller():
             try :
                 is_mulfunction = self.add_on.compensating_imperfact_motion(command, prev_r_status, cur_r_status)
             except Exception as e:
-                process.append({
-                    "err": str(e),
-                    "status": -1
-                })
+                process.append(return_dict(str(e)))
                 break
             color_blob_list = self.sim.detect_color_blob(self.add_on.get_map_info())
             self.add_on.mark_color_blob(color_blob_list)
@@ -94,17 +108,18 @@ class Controller():
             hazard_list = self.sim.detect_hazard(self.add_on.get_map_info())
             self.add_on.mark_hazard(hazard_list)
             if hazard_list:
-                self.add_on.plan_path(self.sim.get_robot_status()["pos"])
+                try :
+                    self.add_on.plan_path(self.sim.get_robot_status()["pos"])
+                    # self.add_on.plan_path(robot_status["pos"])
+                except Exception as e:
+                    process.append(return_dict(str(e)))
+                    return process
             
-            process.append({
-                "map_info": self.add_on.get_map_info_str(),
-                "robot": self.sim.get_robot_status_dict(),
-                "spot_list": self.add_on.get_copy_spot_list(),
-                "status": 0 if not is_mulfunction else 1
-            })
+            process.append(return_dict())
 
         print("마지막 상태")
         print(self.add_on.get_map_info())
         print(self.sim.get_robot_status())
         # print(self.add_on.__spot_list)
         return process
+        
