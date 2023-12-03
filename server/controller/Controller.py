@@ -42,13 +42,13 @@ class Controller():
         return process, err
     
     def __run(self):
-        def return_dict(err=None):
+        def return_dict(is_mulfunction=False, err=None):
             if err is None:
                 ret = {
                     "map_info": self.add_on.get_map_info_str(),
                     "robot": self.sim.get_robot_status_dict(),
                     "spot_list": self.add_on.get_copy_spot_list(),
-                    "status": 0
+                    "status": 0 if not is_mulfunction else 1
                 }
             else :
                 ret = {
@@ -58,8 +58,8 @@ class Controller():
                     "err": err,
                     "status": -1
                 }
-
             return ret
+        
         process = []
         
         color_blob_list = self.sim.detect_color_blob(self.add_on.get_map_info())
@@ -72,7 +72,7 @@ class Controller():
         try :
             self.add_on.plan_path(robot_status["pos"])
         except Exception as e:
-            process.append(return_dict(str(e)))
+            process.append(return_dict(err=str(e)))
             return process
 
         process.append(return_dict())
@@ -88,7 +88,7 @@ class Controller():
             try :
                 is_mulfunction = self.add_on.compensating_imperfact_motion(command, prev_r_status, cur_r_status)
             except Exception as e:
-                process.append(return_dict(str(e)))
+                process.append(return_dict(err=str(e)))
                 break
             color_blob_list = self.sim.detect_color_blob(self.add_on.get_map_info())
             self.add_on.mark_color_blob(color_blob_list)
@@ -99,13 +99,10 @@ class Controller():
                 try :
                     self.add_on.plan_path(self.sim.get_robot_status()["pos"])
                 except Exception as e:
-                    process.append(return_dict(str(e)))
+                    process.append(return_dict(err=str(e)))
                     return process
             
-            process.append(return_dict())
+            process.append(return_dict(is_mulfunction=is_mulfunction))
 
-        print("마지막 상태")
-        print(self.add_on.get_map_info())
-        print(self.sim.get_robot_status())
         return process
         
