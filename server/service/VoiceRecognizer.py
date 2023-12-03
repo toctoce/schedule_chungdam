@@ -35,7 +35,6 @@ class VoiceRecognizer():
 
         audio_data = file_stream.read()
         response = requests.post(url, headers=headers, data=audio_data)
-        print(response.text)
         if response.status_code == 200:
             return json.loads(response.text)
         else:

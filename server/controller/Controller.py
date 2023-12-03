@@ -24,13 +24,11 @@ class Controller():
         spot_list = status_data["spot_list"]
         spot_list = list(map(tuple, spot_list))
         self.add_on.set_spot_list(spot_list)
-        print("spotspot", self.add_on.get_copy_spot_list())
 
         robot_status = status_data["robot"]
         r_pos = (robot_status["row"], robot_status["col"])
         r_direction = robot_status["direction"]
         self.sim.set_robot_status(r_pos, r_direction)
-        print("rr", self.sim.get_robot_status_dict())
 
         vr = VoiceRecognizer()
         err = None
@@ -39,11 +37,6 @@ class Controller():
             self.add_on.set_map_one_pos(voice_info["pos"], voice_info['type'])
         except Exception as e:
             err = str(e)
-        # voice_info = {
-        #     "type": 'h',
-        #     "pos": (1,1)
-        # }
-
 
         process = self.__run()
         return process, err
@@ -89,11 +82,6 @@ class Controller():
             command = self.add_on.follow_path(prev_r_status)
             if command is None:
                 continue
-            if command == "forward":
-                print(self.add_on.get_map_info())
-                print(self.sim.get_robot_status())
-                print(self.add_on.get_path())
-                # print(self.add_on.__spot_list)
             self.sim.move_robot(command)
             cur_r_status = self.sim.get_robot_status()
             self.add_on.check_reach_spot(cur_r_status["pos"])
@@ -110,7 +98,6 @@ class Controller():
             if hazard_list:
                 try :
                     self.add_on.plan_path(self.sim.get_robot_status()["pos"])
-                    # self.add_on.plan_path(robot_status["pos"])
                 except Exception as e:
                     process.append(return_dict(str(e)))
                     return process
@@ -120,6 +107,5 @@ class Controller():
         print("마지막 상태")
         print(self.add_on.get_map_info())
         print(self.sim.get_robot_status())
-        # print(self.add_on.__spot_list)
         return process
         

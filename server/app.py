@@ -36,8 +36,6 @@ def operator_input():
         hazard_input = data["hazard_input"]
 
         ret = ctr.operator_input(map_input, start_input, spot_input, color_input, hazard_input)
-        for a in ret:
-            print(a)
 
         return jsonify(ret)
 
